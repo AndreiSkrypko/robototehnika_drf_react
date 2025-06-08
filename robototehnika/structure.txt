@@ -1,0 +1,21 @@
+
+robototehnika_drf_react/
+├── .venv/                           # Виртуальное окружение
+├── robototehnika/
+    ├── backend/
+    │   ├── manage.py
+    │   ├── backend/                 # Django-проект (settings.py, urls.py)
+    │   ├── main_app/                # Django-приложение
+    │   │   ├── views.py
+    │   │   ├── urls.py
+    │   │   └── templates/
+    │   │       └── index.html
+    │   └── static/
+    │       └── main/img/logo.jpg
+    │
+    ├── frontend/                    # React-приложение
+    │   ├── package.json
+    │   ├── src/
+    │   │   ├── App.js
+    │   │   └── components/
+    │   │       └── Navbar.js
