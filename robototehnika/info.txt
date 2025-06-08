@@ -1,9 +1,84 @@
+# Установка Django – фреймворка для создания веб-приложений на Python
 pip install django
+
+# Установка Django и Django REST Framework — дополнительно для создания API
 pip install django djangorestframework
+
+# Установка django-cors-headers — для настройки CORS, чтобы разрешить обмен данными между фронтендом (React) и бэкендом (Django)
 pip install django-cors-headers
+
+# Создание нового проекта Django с именем "backend"
 django-admin startproject backend
+
+# Переход в папку проекта и создание нового приложения с именем "main_app"
+cd backend
 python manage.py startapp main_app
 
+# Добавляем установленные приложения в список INSTALLED_APPS
+INSTALLED_APPS = [
+    ...
+    'rest_framework',         # Подключение Django REST Framework
+    'corsheaders',            # Подключение CORS middleware
+    'main_app',               # Наше пользовательское приложение
+]
+
+# Подключение middleware для обработки CORS-запросов
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # Должно идти перед другими middleware, обрабатывающими ответы
+    ...
+]
+
+# Разрешаем запросы с любых источников (можно ограничить конкретными доменами)
+CORS_ALLOW_ALL_ORIGINS = True
+# Альтернатива:
+# CORS_ALLOWED_ORIGINS = ['http://localhost:3000']  # Разрешаем запросы только с React-приложения
+
+
+
+# URL-адрес для доступа к статическим файлам
+STATIC_URL = '/static/'
+
+# Указываем директорию, в которой будут находиться статические файлы (например, из React)
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# Добавляем путь к шаблонам, чтобы Django мог находить HTML-файлы
+TEMPLATES[0]['DIRS'] = [BASE_DIR / "main_app" / "templates"]
+
+
+
+# Создание миграций на основе изменений в моделях
+python manage.py makemigrations
+
+# Применение миграций к базе данных
+python manage.py migrate
+
+
+
+# Создание нового React-приложения с именем "frontend"
+npx create-react-app frontend
+
+# Установка библиотеки axios для отправки HTTP-запросов (например, к API Django)
+npm install axios
+
+
+
+cd robototehnika/frontend
+npm run build
+
+
+cp -r build/* ../backend/main_app/templates/
+cp -r build/static/* ../backend/static/
+
+
+
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# Подключение CORS
 INSTALLED_APPS = [
     ...
     'rest_framework',
@@ -16,18 +91,15 @@ MIDDLEWARE = [
     ...
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True  # или CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
+CORS_ALLOW_ALL_ORIGINS = True  # На время разработки
 
+# Шаблоны: путь к index.html из React
+TEMPLATES[0]['DIRS'] = [BASE_DIR / 'backend' / 'main_app' / 'templates']
+
+# Статика
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / 'backend' / 'static',
 ]
 
-TEMPLATES[0]['DIRS'] = [BASE_DIR / "main_app" / "templates"]
-
-
-python manage.py makemigrations
-python manage.py migrate
-
-npx create-react-app frontend
-npm install axios
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Для продакшена
