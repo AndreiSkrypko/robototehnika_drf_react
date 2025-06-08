@@ -1,22 +1,15 @@
 from pathlib import Path
 import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+# Корень проекта: robototehnika/
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
+# Безопасность
 SECRET_KEY = 'django-insecure-g#nou&7%8z!i$3a@-a(b!66o#a!m-j$ok(#&l3j0bzo4xth2=7'
+DEBUG = True  # В продакшене поставить False
+ALLOWED_HOSTS = ['*']  # Для продакшена указать домены (например, ['yourdomain.com'])
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
-# Application definition
-
+# Приложения
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -29,8 +22,9 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
+# Middleware
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Всегда первым
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -40,12 +34,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Корень маршрутов
 ROOT_URLCONF = 'backend.urls'
 
+# Шаблоны — используем index.html из React build
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "main_app" / "templates"],
+        'DIRS': [
+            BASE_DIR / "backend" / "main_app" / "templates",  # туда копируем React build
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -58,56 +56,46 @@ TEMPLATES = [
     },
 ]
 
+# WSGI
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+# База данных
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'backend' / 'db.sqlite3',
     }
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
+# Валидация паролей
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
+# Локализация
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+# Настройка CORS (разрешаем React-доступ)
+CORS_ALLOW_ALL_ORIGINS = True  # ⚠️ Только для разработки
+# Альтернатива безопаснее:
+# CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
 
-CORS_ALLOW_ALL_ORIGINS = True  # или CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
-
+# Статика (React и Django статические файлы)
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static",]
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+# Где искать статические файлы во время разработки
+STATICFILES_DIRS = [
+    BASE_DIR / "backend" / "static",  # ручная статика
+]
 
+# Куда собрать всю статику для продакшена
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Настройка поля по умолчанию для моделей
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
